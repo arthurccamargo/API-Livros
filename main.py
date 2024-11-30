@@ -1,23 +1,29 @@
-import pandas
+from flask import Flask, make_response, jsonify
 import json
 
-# Ler o arquivo CSV
-df = pandas.read_csv("data_book.csv")
+# Ler o arquivo JSON
+with open("data_book.json", "r", encoding="utf-8") as json_file:
+    data = json.load(json_file)
 
-# Converter os dados para uma lista de dicionários
-data = df.to_dict(orient="records")
+# Extrai o conteudo dentro de "books"
+books = data["books"]
 
-# Estruturar os dados com a chave "books"
-books_data = {"books": data}
+# Instacia de Flask em app  
+app = Flask(__name__)
 
-# Salvar os dados em um arquivo JSON
-with open("data_book.json", "w", encoding="utf-8") as json_file:
-    json.dump(books_data, json_file, indent=4, ensure_ascii=False)
+@app.route('/books/<int:book_id>', methods=['GET'])
+def get_books(book_id): # Parametro do caminho
+    # Buscar o livro pelo ID, devolve None se nao encontrar
+    book = next((book for book in books if book["id"] == book_id), None)
 
-# Adicionar ID aos livros
-for i, book in enumerate(books_data["books"], start=1):
-    book["id"] = i
+    if book:
+        return make_response(jsonify(book), 200)
+    else:
+        return make_response(
+            jsonify({'error':f'Book with id {book_id} not found'}), 404
+        )
 
-# Salvar IDs no arquivo JSON
-with open("data_book.json", "w", encoding="utf-8") as json_file:
-    json.dump(books_data, json_file, indent=4, ensure_ascii=False)
+
+# Executa servidor flask
+if __name__ == '__main__':
+    app.run(debug=True) 
