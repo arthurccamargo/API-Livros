@@ -13,3 +13,11 @@ books_data = {"books": data}
 # Salvar os dados em um arquivo JSON
 with open("data_book.json", "w", encoding="utf-8") as json_file:
     json.dump(books_data, json_file, indent=4, ensure_ascii=False)
+
+# Adicionar ID aos livros
+for i, book in enumerate(books_data["books"], start=1):
+    book["id"] = i
+
+# Salvar IDs no arquivo JSON
+with open("data_book.json", "w", encoding="utf-8") as json_file:
+    json.dump(books_data, json_file, indent=4, ensure_ascii=False)
