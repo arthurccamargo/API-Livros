@@ -27,3 +27,5 @@ data_dict = {
     "selfLink":selfLink_list,
 }
 
+data = pandas.DataFrame(data_dict)
+data.to_csv("data_book.csv")
